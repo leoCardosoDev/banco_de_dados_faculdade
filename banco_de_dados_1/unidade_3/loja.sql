@@ -1,0 +1,76 @@
+-- mysql -u root -p
+CREATE SCHEMA LOJA;
+
+USE LOJA;
+
+CREATE TABLE CLIENTE (
+  CODIGO INTEGER NOT NULL AUTO_INCREMENT,
+  NOME VARCHAR(50) NOT NULL,
+  CPF CHAR(11) NULL,
+  CONTATO VARCHAR(20),
+  DATA_NASC DATE NULL,
+  SEXO CHAR(1) NULL,
+  BAIRRO VARCHAR(50) NULL,
+  PRIMARY KEY(CODIGO)
+);
+
+ALTER TABLE CLIENTE ADD COLUMN COD_CIDADE INTEGER NULL;
+
+ALTER TABLE CLIENTE DROP COLUMN DATA_NASC;
+
+DROP TABLE CLIENTE;
+
+ALTER TABLE CLIENTE ADD PRIMARY KEY PK_CLIENTE (CODIGO);
+ALTER TABLE CLIENTE ADD CONSTRAINT PK_CLIENTE PRIMARY KEY(CODIGO);
+ALTER TABLE CLIENTE DROP PRIMARY KEY;
+
+ALTER TABLE CLIENTE ADD CONSTRAINT FK_CLIENTE_CIDADE 
+FOREIGN KEY(COD_CIDADE) REFERENCES CIDADE(COD_CIDADE);
+ALTER TABLE CLIENTE DROP FOREIGN KEY FK_CLIENTE_CIDADE;
+
+SELECT NOME, CONTATO, DATA_NASC 
+FROM CLIENTE WHERE SEXO = 'F';
+
+-- Para recuperar os clientes que nasceram a partir de 1990
+SELECT * FROM CLIENTE WHERE DATA_NASC >= '1990-01-01';
+
+-- Para recuperar os clientes que apresentam Viviane no nome
+SELECT NOME, CONTATO FROM CLIENTE WHERE NOME LIKE '%Viviane%';
+
+-- Para recuperar os clientes que nasceram entre 1990 e 1995
+SELECT NOME, CONTATO, DATA_NASC 
+FROM CLIENTE WHERE DATA_NASC BETWEEN '1990-01-01' AND '1995-12-31 23:59';
+
+-- Para recuperar os clientes do sexo feminino e que moram na Barra
+SELECT NOME, SEXO, BAIRRO 
+FROM CLIENTE WHERE SEXO = 'F' AND BAIRRO = 'Barra';
+
+-- Para recuperar os clientes que nasceram até 1980 ou que sejam do sexo masculino
+SELECT NOME, DATA_NASC, SEXO 
+FROM CLIENTE 
+WHERE DATA_NASC < '1980-01-01' OR SEXO = 'M';
+
+-- Para recuperar os clientes que não moram na Barra
+SELECT NOME, SEXO, BAIRRO FROM CLIENTE WHERE NOT (BAIRRO = 'Barra');
+
+-- Caso inserir em uma suposta tabela CIDADE
+INSERT INTO CIDADE (COD_CIDADE, DCR_CIDADE) VALUES (1, 'São Paulo');
+
+-- Exemplo de duas linhas usadas para inserção de nossos dados
+INSERT INTO CLIENTE (CODIGO, NOME, CPF, CONTATO, DATA_NASC, SEXO, BAIRRO)
+VALUES(1, 'Adriana Araújo', '01120389921', '71 982213455', '1987-02-03', 'F','Barra');
+
+INSERT INTO CLIENTE (CODIGO, NOME, CPF, CONTATO, DATA_NASC, SEXO, BAIRRO)
+VALUES (2, 'Renato Nogueira', '98220379931', '11 933321999', '1977-07-09', 'M', 'Morumbi');
+
+-- Para modificar o nome do bairro ‘Barra’ para ‘Nova Barra’
+UPDATE CLIENTE SET BAIRRO = 'Nova Barra' WHERE BAIRRO = 'Barra';
+
+-- Para modificar o bairro do cliente de código 10 para 'Nova Barra'
+UPDATE CLIENTE SET BAIRRO = 'Nova Barra' WHERE CODIGO = 10;
+
+-- Para modificar o nome do bairro ‘Barra’ para ‘Nova Barra’
+DELETE FROM CLIENTE WHERE BAIRRO = 'Barra';
+ 
+-- Para excluir o cliente de código 7
+DELETE FROM CLIENTE WHERE CODIGO = 7;
